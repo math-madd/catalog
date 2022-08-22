@@ -1,0 +1,23 @@
+  name: 'branch-build'
+  on:
+    push:
+      branches-ignore: [ master ]
+
+  jobs:
+    build_job:
+      runs-on: ubuntu-latest
+      name: Build & Test Microservice
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v3
+
+        - name: Set-Up JDK 11
+          uses: actions/setup-java@v1
+          with:
+            java-version: 11
+
+        - name: Cache Maven Packages
+          uses: actions/cache@v1
+          with:
+            path: ~/.m2
+            key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
