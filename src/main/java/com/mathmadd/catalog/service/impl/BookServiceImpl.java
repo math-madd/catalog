@@ -1,6 +1,9 @@
-package com.mathmadd.catalog.book;
+package com.mathmadd.catalog.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.mathmadd.catalog.model.Book;
+import com.mathmadd.catalog.model.Note;
+import com.mathmadd.catalog.repository.BookRepository;
+import com.mathmadd.catalog.service.BookService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -9,26 +12,25 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
-public class BookService {
+public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
 
-    public BookService(BookRepository bookRepository) {
+    public BookServiceImpl(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
     }
 
-    @Autowired
     public List<Book> getBooks() {
         return bookRepository.findAll();
     }
 
     public void addNewBook(Book book) {
-       Optional<Book> bookOptional = bookRepository
-               .findBookByIsbn(book.getIsbn());
-       if(bookOptional.isPresent()) {
-           throw new IllegalStateException("ISBN already exists within database");
-       }
-       bookRepository.save(book);
+        Optional<Book> bookOptional = bookRepository
+                .findBookByIsbn(book.getIsbn());
+        if(bookOptional.isPresent()) {
+            throw new IllegalStateException("ISBN already exists within database");
+        }
+        bookRepository.save(book);
     }
 
     public void deleteBook(Long bookId) {
@@ -37,10 +39,11 @@ public class BookService {
             throw new IllegalStateException("BOOK ID: " + bookId + " not found.");
         }
         bookRepository.deleteById(bookId);
-        }
+    }
 
     @Transactional
     public void updateBook(Long bookId, String title, String isbn) {
+
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(()-> new IllegalStateException(
                         "BOOK ID: " + bookId + " not found."
@@ -57,6 +60,20 @@ public class BookService {
             }
             book.setIsbn(isbn);
         }
-    }
-}
 
+    }
+
+    @Override
+    public void addNote(Long bookId, Note note) {
+
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(()-> new IllegalStateException(
+                        "BOOK ID: " + bookId + " not found."
+                ));
+
+        book.getNotes().add(note);
+        bookRepository.save(book);
+
+    }
+
+}

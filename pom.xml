@@ -35,11 +35,6 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>io.interface21</groupId>
-			<artifactId>ameba-lib</artifactId>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
 			<groupId>org.openwms</groupId>
 			<artifactId>org.openwms.core.util</artifactId>
 			<version>1.9.0</version>
