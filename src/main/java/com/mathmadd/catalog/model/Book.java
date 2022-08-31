@@ -1,6 +1,8 @@
-package com.mathmadd.catalog.book;
+package com.mathmadd.catalog.model;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -24,19 +26,13 @@ public class Book {
     private String publisher;
     private String genre;
     private int pages;
+    private String status;
+
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "book_id")
+    private List<Note> notes;
 
     public Book() {
-    }
-
-    public Book(Long id, String isbn, String title, String author_lastname, String author_firstname, String publisher, String genre, int pages) {
-        this.id = id;
-        this.isbn = isbn;
-        this.title = title;
-        this.author_lastname = author_lastname;
-        this.author_firstname = author_firstname;
-        this.publisher = publisher;
-        this.genre = genre;
-        this.pages = pages;
     }
 
     public Book(String isbn, String title, String author_lastname, String author_firstname, String publisher, String genre, int pages) {
@@ -47,7 +43,27 @@ public class Book {
         this.publisher = publisher;
         this.genre = genre;
         this.pages = pages;
+        this.status = BookStatus.UNREAD.getLabel();
+        this.notes = new ArrayList<>();
     }
+
+    public Book(String isbn, String title, String author_lastname, String author_firstname, String publisher, String genre, int pages, String status) {
+        this.isbn = isbn;
+        this.title = title;
+        this.author_lastname = author_lastname;
+        this.author_firstname = author_firstname;
+        this.publisher = publisher;
+        this.genre = genre;
+        this.pages = pages;
+        this.status = status;
+        this.notes = new ArrayList<>();
+    }
+
+    public Book(Book book) {
+        this(book.getIsbn(), book.getTitle(), book.getAuthor_lastname(), book.getAuthor_firstname(), book.getPublisher(), book.getGenre(), book.getPages());
+        this.notes = new ArrayList<>(book.getNotes());
+    }
+
 
     public Long getId() {
         return id;
@@ -113,17 +129,33 @@ public class Book {
         this.pages = pages;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public List<Note> getNotes() {
+        return notes;
+    }
+
+    public void setNotes(List<Note> notes) {
+        this.notes = notes;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Book book = (Book) o;
-        return id == book.id && isbn == book.isbn && pages == book.pages && Objects.equals(title, book.title) && Objects.equals(author_lastname, book.author_lastname) && Objects.equals(author_firstname, book.author_firstname) && Objects.equals(publisher, book.publisher) && Objects.equals(genre, book.genre);
+        return pages == book.pages && Objects.equals(id, book.id) && Objects.equals(isbn, book.isbn) && Objects.equals(title, book.title) && Objects.equals(author_lastname, book.author_lastname) && Objects.equals(author_firstname, book.author_firstname) && Objects.equals(publisher, book.publisher) && Objects.equals(genre, book.genre) && Objects.equals(notes, book.notes);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, isbn, title, author_lastname, author_firstname, publisher, genre, pages);
+        return Objects.hash(id, isbn, title, author_lastname, author_firstname, publisher, genre, pages, notes);
     }
 
     @Override
@@ -137,6 +169,8 @@ public class Book {
                 ", publisher='" + publisher + '\'' +
                 ", genre='" + genre + '\'' +
                 ", pages=" + pages +
+                ", notes=" + notes +
                 '}';
     }
+
 }

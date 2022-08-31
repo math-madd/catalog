@@ -1,5 +1,8 @@
-package com.mathmadd.catalog.book;
+package com.mathmadd.catalog.config;
 
+import com.mathmadd.catalog.model.BookStatus;
+import com.mathmadd.catalog.repository.BookRepository;
+import com.mathmadd.catalog.model.Book;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +22,8 @@ public class BookConfig {
                     "Robert Jackson",
                     "Crown",
                     "Fantasy",
-                    512
+                    512,
+                   BookStatus.CURRENTLY_READING.getLabel()
         );
            Book adsom = new Book(
                     "9780765376459",
@@ -28,7 +32,8 @@ public class BookConfig {
                     "Victoria",
                     "Tor",
                     "Fantasy",
-                    400
+                    400,
+                   BookStatus.READ.getLabel()
             );
 
            bookRepository.saveAll(
